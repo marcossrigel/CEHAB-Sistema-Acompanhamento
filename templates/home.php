@@ -297,18 +297,23 @@ $isSolicitacoes = in_array($userIdCehab, $solicitacoesAllowedIds, true);
       <span>Gerar Relatório</span>
     </a>
 
+    <br>
+
     <?php if ($isSolicitacoes): ?>
       <a class="drawer-item" href="../pages/solicitacoes.php">
         <i class="fa-solid fa-inbox"></i>
         <span>Solicitações</span>
       </a>
     <?php else: ?>
+      
+      <br>
       <a class="drawer-item" href="../pages/exclusao.php">
         <i class="fa-solid fa-ban"></i>
         <span>Exclusão</span>
       </a>
     <?php endif; ?>
 
+    <br>
     <?php if ($isAdmin): ?>
       <a class="drawer-item" href="../pages/todos.php">
         <i class="fa-solid fa-layer-group"></i>
@@ -316,6 +321,7 @@ $isSolicitacoes = in_array($userIdCehab, $solicitacoesAllowedIds, true);
       </a>
     <?php endif; ?>
 
+    <br>
     <a class="drawer-item" href="suporte.php">
       <i class="fa-solid fa-headset"></i>
       <span>Ajuda</span>
