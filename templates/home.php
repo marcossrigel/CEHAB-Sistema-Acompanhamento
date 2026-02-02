@@ -292,8 +292,6 @@ $isSolicitacoes = in_array($userIdCehab, $solicitacoesAllowedIds, true);
 
     <hr class="drawer-sep">
 
-
-
     <a class="drawer-item" href="../pages/gerar_relatorio.php">
       <i class="fa-solid fa-file-lines"></i>
       <span>Gerar Relatório</span>
