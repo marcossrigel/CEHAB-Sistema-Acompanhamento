@@ -9,16 +9,10 @@ if (empty($_SESSION['auth_ok']) || empty($_SESSION['g_id'])) {
 $setor = htmlspecialchars($_SESSION['setor'] ?? '—', ENT_QUOTES, 'UTF-8');
 $nome  = htmlspecialchars($_SESSION['nome']  ?? '',  ENT_QUOTES, 'UTF-8');
 
-// ==============================
-// CONFIG PLANILHA
-// ==============================
 $SPREADSHEET_ID = '1sa08Jk3NDm3qyZBzoBBIxO4pji6YwExqXmIaZnW7otY';
 $GID            = '130227330';
 $csvUrl = "https://docs.google.com/spreadsheets/d/{$SPREADSHEET_ID}/export?format=csv&gid={$GID}";
 
-// ==============================
-// FUNÇÃO DE FETCH + CACHE
-// ==============================
 function fetchCsv(string $url): string {
   $cacheFile = sys_get_temp_dir() . "/cehab_pagamento_".md5($url).".csv";
   $ttl = 300; // 5 min
@@ -39,7 +33,6 @@ function fetchCsv(string $url): string {
     return file_exists($cacheFile) ? (file_get_contents($cacheFile) ?: '') : '';
   }
 
-  // se veio HTML (login), considera falha
   if (stripos($csv, '<html') !== false || stripos($csv, '<!doctype') !== false) {
     return '';
   }
@@ -48,9 +41,6 @@ function fetchCsv(string $url): string {
   return $csv;
 }
 
-// ==============================
-// helpers
-// ==============================
 function normHeader(string $s): string {
   $s = trim(mb_strtolower($s, 'UTF-8'));
   $s = str_replace(["\u{00A0}"], ' ', $s);
@@ -82,7 +72,7 @@ function parseDateMaybe(string $s): int {
 // ==============================
 $csvRaw = fetchCsv($csvUrl);
 
-$groups = []; // contrato => ['contrato'=>..., 'obj_def'=>..., 'count'=>..., 'rows'=>[...]]
+$groups = [];
 $erroPlanilha = '';
 
 if ($csvRaw !== '') {
@@ -105,8 +95,6 @@ if ($csvRaw !== '') {
       'solicit'   => array_search('nome do solicitante', $H, true),
       'origem'    => array_search('origem da demanda / setor', $H, true),
       'email'     => array_search('endereco de e-mail', $H, true),
-
-      // extras que aparecem na sua planilha (pelo print):
       'bm'        => array_search('bm no', $H, true),
       'valor'     => array_search('valor', $H, true),
       'fonte'     => array_search('fonte de recursos do pagamento', $H, true),
@@ -119,7 +107,6 @@ if ($csvRaw !== '') {
       'fonte_det' => array_search('fonte detalhada', $H, true),
     ];
 
-    // fallback: algumas planilhas vêm como "nº contrato" / "n° contrato" etc
     if ($idx['contrato'] === false) {
       foreach ($H as $k => $v) {
         if (preg_match('/^(n|no|n o)\s*contrato$/', $v)) { $idx['contrato'] = $k; break; }
@@ -139,7 +126,6 @@ if ($csvRaw !== '') {
         if (!isset($groups[$contr])) {
           $groups[$contr] = [
             'contrato' => $contr,
-            // 👇 OBJETO DEFINITIVO = primeira ocorrência daquele contrato
             'obj_def'  => $obj,
             'count'    => 0,
             'rows'     => []
